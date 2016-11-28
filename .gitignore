@@ -1,2 +1,4 @@
-update_git_cache.log
+*.log
 git/*
+.vagrant
+devstack_opt.vdi
