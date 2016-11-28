@@ -8,6 +8,7 @@
 
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
 file_to_disk = File.join(VAGRANT_ROOT, 'devstack_opt.vdi')
+shell_provision = File.join(VAGRANT_ROOT, 'setup.sh')
 
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
@@ -79,7 +80,7 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell" do |s|
     s.env = {REPRODUCE_SCRIPT:ENV['REPRODUCE_SCRIPT']}
-    s.path = "/Users/andreafrittoli/openstack/bug-triage/setup.sh"
+    s.path = shell_provision
   end
   
 end
