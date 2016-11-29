@@ -9,10 +9,7 @@ BASE=/opt/stack
 # Setup 2nd disk
 parted /dev/sdc mklabel msdos
 parted /dev/sdc mkpart primary 512 100%
-mkfs.ext4 /dev/sdc1
-mkdir /opt || true
-echo $(blkid /dev/sdc1 | awk '{print$2}' | sed -e 's/"//g') /opt   ext4	noatime,nobarrier   0   0 >> /etc/fstab
-mount /opt
+mkfs.ext4 -L ephemeral0 /dev/sdc1
 
 # Install apt dependencies
 apt-get update
