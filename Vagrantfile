@@ -7,7 +7,7 @@
 # you're doing.
 
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
-ephemeral_disk = File.join(VAGRANT_ROOT, 'ephemeral.vdi'
+ephemeral_disk = File.join(VAGRANT_ROOT, 'ephemeral.vdi')
 shell_provision = File.join(VAGRANT_ROOT, 'setup.sh')
 
 Vagrant.configure("2") do |config|
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
     vb.name = "devstack"
 
     unless File.exist?(ephemeral_disk)
-      vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 20 * 1024]
+      vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 8 * 1024]
     end
     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', ephemeral_disk]
   end

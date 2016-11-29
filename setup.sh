@@ -5,11 +5,14 @@
 # TODO(andreaf) This may be nicer as an ansible script
 
 BASE=/opt/stack
+DEV=/dev/sdc
 
 # Setup 2nd disk
-parted /dev/sdc mklabel msdos
-parted /dev/sdc mkpart primary 512 100%
-mkfs.ext4 -L ephemeral0 /dev/sdc1
+parted ${DEV} mklabel msdos
+parted ${DEV} --script -- mkpart primary linux-swap 1 8192
+mkswap ${DEV}1
+swapon ${DEV}1
+grep -q ${DEV}1 /proc/swaps || exit 1
 
 # Install apt dependencies
 apt-get update
