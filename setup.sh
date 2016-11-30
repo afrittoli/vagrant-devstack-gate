@@ -9,7 +9,7 @@ DEV=/dev/sdc
 
 # Setup 2nd disk
 parted ${DEV} mklabel msdos
-parted ${DEV} --script -- mkpart primary linux-swap 1 8192
+parted ${DEV} --script -- mkpart primary linux-swap 1 9216
 mkswap ${DEV}1
 swapon ${DEV}1
 grep -q ${DEV}1 /proc/swaps || exit 1
@@ -27,3 +27,10 @@ if [ -n "$REPRODUCE_SCRIPT" ]; then
     curl "$REPRODUCE_SCRIPT" > ~/reproduce.sh
     chmod 700 ~/reproduce.sh
 fi
+
+# Fix the reproduce script to not run tests and preserve stack user
+sed -i -e '/DEVSTACK_GATE_TEMPEST_NOTESTS/s/=.*$/="1"/g' -e '/DEVSTACK_GATE_REMOVE_STACK_SUDO/s/=.*$/="0"/g' ~/reproduce.sh
+
+# Setup the node
+cd ~
+./reproduce.sh

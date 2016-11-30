@@ -47,14 +47,14 @@ Vagrant.configure("2") do |config|
     vb.gui = false
   
     # Customize the amount of memory and CPU for the VM:
-    vb.memory = "4096"
-    vb.cpus = "2"
+    vb.memory = "8192"
+    vb.cpus = "4"
 
     # Customize the VM name
     vb.name = "devstack"
 
     unless File.exist?(ephemeral_disk)
-      vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 8 * 1024]
+      vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 9 * 1024]
     end
     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', ephemeral_disk]
   end
