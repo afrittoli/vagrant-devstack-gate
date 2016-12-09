@@ -27,11 +27,18 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE(andreaf) Port 80 is needed by devstack but cannot be forwarded by
+  # virtualbox since it's privileged. Use an ssh tunnel instead, e.g.
+  #
+  # sudo ssh -p 2222 -gNfL 80:localhost:80 ubuntu@localhost -i [path to key]
+  #
+  # The ssh key can be found by "vagrant ssh-config"
   config.vm.network "forwarded_port", guest: 8774, host: 8774
   config.vm.network "forwarded_port", guest: 8775, host: 8775
   config.vm.network "forwarded_port", guest: 8776, host: 8776
   config.vm.network "forwarded_port", guest: 9191, host: 9191
   config.vm.network "forwarded_port", guest: 9292, host: 9292
+  config.vm.network "forwarded_port", guest: 9696, host: 9696
   config.vm.network "forwarded_port", guest: 5000, host: 5000
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 
