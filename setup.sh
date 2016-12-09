@@ -30,6 +30,12 @@ fi
 
 # Fix the reproduce script to not run tests and preserve stack user
 sed -i -e '/DEVSTACK_GATE_TEMPEST_NOTESTS/s/=.*$/="1"/g' -e '/DEVSTACK_GATE_REMOVE_STACK_SUDO/s/=.*$/="0"/g' ~/reproduce.sh
+# Ensure the HOST_IP is localhost for port forwarding to work
+if $(grep DEVSTACK_LOCAL_CONFIG reproduce.sh); then
+    sed -i '/DEVSTACK_LOCAL_CONFIG/s,="\(.*\)$,="HOST_IP=127.0.0.1\n\1,g' reproduce.sh
+else
+    sed -i '/ZUUL_UUID/a declare -x DEVSTACK_LOCAL_CONFIG="HOST_IP=127.0.0.1"' reproduce.sh
+fi
 
 # Setup the node
 cd ~
