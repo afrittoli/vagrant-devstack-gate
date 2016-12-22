@@ -6,10 +6,12 @@
 
 BASE=/opt/stack
 DEV=/dev/sdc
+REPRODUCE_SCRIPT=${REPRODUCE_SCRIPT:-http://logs.openstack.org/periodic/periodic-tempest-dsvm-neutron-full-test-accounts-ubuntu-xenial-master/7fec01c/logs/reproduce.sh}
 
 # Setup 2nd disk
 parted ${DEV} mklabel msdos
 parted ${DEV} --script -- mkpart primary linux-swap 1 9216
+sleep 10
 mkswap ${DEV}1
 swapon ${DEV}1
 grep -q ${DEV}1 /proc/swaps || exit 1
@@ -21,6 +23,12 @@ apt-get install -y python-all-dev build-essential git libssl-dev ntp ntpdate
 # Install pip and virtualenv
 curl https://bootstrap.pypa.io/get-pip.py | python
 pip install virtualenv
+
+# Network discovery
+# NOTE(andreaf) This is not a solid regex, but good enough for my vagrant setup
+HOSTONLY_INTERFACE=$(egrep 'iface (.*) inet dhcp' /etc/network/interfaces | awk '{ print $2 }')
+# A CIDR with the local IP
+IP_AND_RANGE=$(ip -f inet a show $HOSTONLY_INTERFACE | grep inet | awk '{ print $2 }')
 
 # Download the reproduce script
 if [ -n "$REPRODUCE_SCRIPT" ]; then
