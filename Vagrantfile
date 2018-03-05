@@ -95,5 +95,10 @@ Vagrant.configure("2") do |config|
     s.env = {REPRODUCE_SCRIPT:ENV['REPRODUCE_SCRIPT']}
     s.path = shell_provision
   end
+
+  config.vm.provision "ansible" do |ansible|
+    ENV['ANSIBLE_ROLES_PATH'] = "/git/github.com/afrittoli/cross_service_tempest_plugins/ansible/roles:/git/openstack.org/openstack-infra/devstack-gate/playbooks/roles"
+    ansible.playbook = "setup.yaml"
+  end
   
 end

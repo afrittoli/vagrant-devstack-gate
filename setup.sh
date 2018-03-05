@@ -6,7 +6,7 @@
 
 BASE=/opt/stack
 DEV=/dev/sdc
-REPRODUCE_SCRIPT=${REPRODUCE_SCRIPT:-http://logs.openstack.org/periodic/periodic-tempest-dsvm-neutron-full-test-accounts-ubuntu-xenial-master/7fec01c/logs/reproduce.sh}
+# REPRODUCE_SCRIPT=${REPRODUCE_SCRIPT:-http://logs.openstack.org/periodic/periodic-tempest-dsvm-neutron-full-test-accounts-ubuntu-xenial-master/7fec01c/logs/reproduce.sh}
 
 # Setup 2nd disk
 parted ${DEV} mklabel msdos
@@ -47,4 +47,6 @@ if [ -n "$REPRODUCE_SCRIPT" ]; then
     # Setup the node
     cd ~
     ./reproduce.sh
+else
+    echo "HOST_IP=127.0.0.1" >> /opt/stack/devstack/localrc
 fi
