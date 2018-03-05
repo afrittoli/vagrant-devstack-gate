@@ -20,7 +20,7 @@ function update_git {
 
 echo -e "$(date) Updating git repos\n" > $BASE_DIR/update_git_cache.log
 printf "Updating repos: "
-for repo in $(find ./git -type d -maxdepth 2 -mindepth 2); do
+for repo in $(find ./work/src/git.openstack.org -type d -maxdepth 2 -mindepth 2); do
     update_git $BASE_DIR/$repo >> $BASE_DIR/update_git_cache.log 2>&1
     printf " $(basename $repo)"
 done

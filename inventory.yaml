@@ -1,0 +1,360 @@
+all:
+  hosts:
+    compute1:
+      ansible_connection: ssh
+      ansible_host: 127.0.0.1
+      ansible_port: 2222
+      ansible_user: ubuntu
+      ansible_user_dir: /home/ubuntu
+      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/controller/virtualbox/private_key
+      nodepool:
+        az: null
+        cloud: local-vagrant
+        interface_ip: 192.168.56.102
+        label: ubuntu-xenial
+        private_ipv4: 192.168.56.102
+        provider: vagrant
+        public_ipv4: 192.168.56.102
+        public_ipv6: fddd::11
+        region: laptop
+    controller:
+      ansible_connection: ssh
+      ansible_host: 127.0.0.1
+      ansible_port: 2200
+      ansible_user: ubuntu
+      ansible_user_dir: /home/ubuntu
+      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/compute1/virtualbox/private_key
+      nodepool:
+        az: null
+        cloud: local-vagrant
+        interface_ip: 192.168.56.101
+        label: ubuntu-xenial
+        private_ipv4: 192.168.56.101
+        provider: vagrant
+        public_ipv4: 192.168.56.101
+        public_ipv6: fddd::10
+        region: laptop
+  vars:
+    ansible_python_interpreter: /usr/bin/python2
+    ara_generate_html: failure
+    devstack_localconf:
+      post-config:
+        $NEUTRON_CONF:
+          DEFAULT:
+            global_physnet_mtu: '{{ external_bridge_mtu }}'
+    devstack_localrc:
+      ADMIN_PASSWORD: secretadmin
+      CINDER_PERIODIC_INTERVAL: 10
+      DATABASE_PASSWORD: secretdatabase
+      DEBUG_LIBVIRT_COREDUMPS: true
+      ERROR_ON_CLONE: true
+      ETCD_DOWNLOAD_URL: http://tarballs.openstack.org/etcd/
+      FIXED_RANGE: 10.1.0.0/20
+      FLOATING_RANGE: 172.24.5.0/24
+      HOST_IP: '{{ hostvars[''controller''][''nodepool''][''private_ipv4''] }}'
+      IPV4_ADDRS_SAFE_TO_USE: 10.1.0.0/20
+      LIBVIRT_TYPE: qemu
+      LOGFILE: /opt/stack/logs/devstacklog.txt
+      LOG_COLOR: false
+      NETWORK_GATEWAY: 10.1.0.1
+      NOVA_VNC_ENABLED: true
+      NOVNC_FROM_PACKAGE: true
+      PUBLIC_BRIDGE_MTU: '{{ external_bridge_mtu }}'
+      PUBLIC_NETWORK_GATEWAY: 172.24.5.1
+      RABBIT_PASSWORD: secretrabbit
+      SERVICE_HOST: '{{ hostvars[''controller''][''nodepool''][''private_ipv4''] }}'
+      SERVICE_PASSWORD: secretservice
+      SWIFT_HASH: 1234123412341234
+      SWIFT_REPLICAS: 1
+      SWIFT_START_ALL_SERVICES: false
+      VERBOSE: true
+      VERBOSE_NO_TIMESTAMP: true
+      VNCSERVER_LISTEN: 0.0.0.0
+      VNCSERVER_PROXYCLIENT_ADDRESS: '{{ hostvars[inventory_hostname][''nodepool''][''private_ipv4'']
+        }}'
+    devstack_services:
+      base: false
+      c-api: true
+      c-bak: true
+      c-sch: true
+      c-vol: true
+      cinder: true
+      dstat: true
+      etcd3: true
+      g-api: true
+      g-reg: true
+      horizon: false
+      key: true
+      mysql: true
+      n-api: true
+      n-api-meta: true
+      n-cauth: true
+      n-cond: true
+      n-cpu: true
+      n-novnc: true
+      n-obj: true
+      n-sch: true
+      neutron-agent: true
+      neutron-api: true
+      neutron-dhcp: true
+      neutron-l3: true
+      neutron-metadata-agent: true
+      neutron-metering: true
+      peakmem_tracker: true
+      placement-api: true
+      rabbit: true
+      s-account: true
+      s-container: true
+      s-object: true
+      s-proxy: true
+      tempest: false
+      tls-proxy: true
+    extensions_to_txt:
+      conf: true
+      localrc: true
+      log: true
+      stackenv: true
+    zuul:
+      _inheritance_path:
+      - '<Job base branches: None source: openstack-infra/project-config/zuul.d/jobs.yaml@master#26>'
+      - '<Job multinode branches: None source: openstack-infra/zuul-jobs/zuul.yaml@master#292>'
+      - '<Job devstack-base branches: {MatchAny:{BranchMatcher:master}} source: openstack-dev/devstack/.zuul.yaml@master#41>'
+      - '<Job devstack branches: {MatchAny:{BranchMatcher:master}} source: openstack-dev/devstack/.zuul.yaml@master#159>'
+      - '<Job devstack-multinode branches: {MatchAny:{BranchMatcher:master}} source:
+        openstack-dev/devstack/.zuul.yaml@master#284>'
+      - '<Job devstack-multinode branches: {MatchAll:{ImpliedBranchMatcher:master},{MatchAny:{BranchMatcher:master}}}
+        source: openstack-dev/devstack/.zuul.yaml@master#355>'
+      branch: master
+      build: local
+      buildset: c44e01f592264a0e8dd5e48716654ebb
+      change: '545696'
+      change_url: https://review.openstack.org/545696
+      executor:
+        hostname: 127.0.0.1
+        log_root: /git/github.com/afrittoli/vagrant-devstack-gate/logs
+        result_data_file: /git/github.com/afrittoli/vagrant-devstack-gate/work/results.json
+        src_root: /git/github.com/afrittoli/vagrant-devstack-gate/work/src/git
+        work_root: /git/github.com/afrittoli/vagrant-devstack-gate/work
+      items:
+      - branch: master
+        change: '548100'
+        change_url: https://review.openstack.org/548100
+        patchset: '6'
+        project:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-dev/devstack
+          name: openstack-dev/devstack
+          short_name: devstack
+          src_dir: src/git.openstack.org/openstack-dev/devstack
+      - branch: master
+        change: '546765'
+        change_url: https://review.openstack.org/546765
+        patchset: '34'
+        project:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-dev/devstack
+          name: openstack-dev/devstack
+          short_name: devstack
+          src_dir: src/git.openstack.org/openstack-dev/devstack
+      - branch: master
+        change: '548049'
+        change_url: https://review.openstack.org/548049
+        patchset: '6'
+        project:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-infra/zuul-jobs
+          name: openstack-infra/zuul-jobs
+          short_name: zuul-jobs
+          src_dir: src/git.openstack.org/openstack-infra/zuul-jobs
+      - branch: master
+        change: '545696'
+        change_url: https://review.openstack.org/545696
+        patchset: '74'
+        project:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-dev/devstack
+          name: openstack-dev/devstack
+          short_name: devstack
+          src_dir: src/git.openstack.org/openstack-dev/devstack
+      job: devstack-multinode
+      jobtags: []
+      patchset: '74'
+      pipeline: check
+      project:
+        canonical_hostname: git.openstack.org
+        canonical_name: git.openstack.org/openstack-dev/devstack
+        name: openstack-dev/devstack
+        short_name: devstack
+        src_dir: src/git.openstack.org/openstack-dev/devstack
+      projects:
+        git.openstack.org/openstack-dev/devstack:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-dev/devstack
+          checkout: master
+          name: openstack-dev/devstack
+          required: true
+          short_name: devstack
+          src_dir: src/git.openstack.org/openstack-dev/devstack
+        git.openstack.org/openstack-infra/zuul-jobs:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack-infra/zuul-jobs
+          checkout: master
+          name: openstack-infra/zuul-jobs
+          required: false
+          short_name: zuul-jobs
+          src_dir: src/git.openstack.org/openstack-infra/zuul-jobs
+        git.openstack.org/openstack/cinder:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/cinder
+          checkout: master
+          name: openstack/cinder
+          required: true
+          short_name: cinder
+          src_dir: src/git.openstack.org/openstack/cinder
+        git.openstack.org/openstack/glance:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/glance
+          checkout: master
+          name: openstack/glance
+          required: true
+          short_name: glance
+          src_dir: src/git.openstack.org/openstack/glance
+        git.openstack.org/openstack/keystone:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/keystone
+          checkout: master
+          name: openstack/keystone
+          required: true
+          short_name: keystone
+          src_dir: src/git.openstack.org/openstack/keystone
+        git.openstack.org/openstack/neutron:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/neutron
+          checkout: master
+          name: openstack/neutron
+          required: true
+          short_name: neutron
+          src_dir: src/git.openstack.org/openstack/neutron
+        git.openstack.org/openstack/nova:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/nova
+          checkout: master
+          name: openstack/nova
+          required: true
+          short_name: nova
+          src_dir: src/git.openstack.org/openstack/nova
+        git.openstack.org/openstack/requirements:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/requirements
+          checkout: master
+          name: openstack/requirements
+          required: true
+          short_name: requirements
+          src_dir: src/git.openstack.org/openstack/requirements
+        git.openstack.org/openstack/swift:
+          canonical_hostname: git.openstack.org
+          canonical_name: git.openstack.org/openstack/swift
+          checkout: master
+          name: openstack/swift
+          required: true
+          short_name: swift
+          src_dir: src/git.openstack.org/openstack/swift
+      ref: refs/changes/96/545696/74
+      tenant: openstack
+      timeout: 7200
+      voting: true
+    zuul_copy_output:
+      /etc/glusterfs/glusterd.vol: logs
+      /etc/resolv.conf: logs
+      /etc/sudoers: logs
+      /etc/sudoers.d: logs
+      /var/log/ceph: logs
+      /var/log/glusterfs: logs
+      /var/log/libvirt: logs
+      /var/log/mysql.err: logs
+      /var/log/mysql.log: logs
+      /var/log/openvswitch: logs
+      /var/log/postgresql: logs
+      /var/log/rabbitmq: logs
+      /var/log/unbound.log: logs
+      '{{ devstack_conf_dir }}/.stackenv': logs
+      '{{ devstack_conf_dir }}/local.conf': logs
+      '{{ devstack_conf_dir }}/localrc': logs
+      '{{ devstack_full_log}}': logs
+      '{{ devstack_log_dir }}/devstacklog.txt': logs
+      '{{ devstack_log_dir }}/devstacklog.txt.summary': logs
+      '{{ devstack_log_dir }}/dstat-csv.log': logs
+      '{{ stage_dir }}/apache': logs
+      '{{ stage_dir }}/apache_config': logs
+      '{{ stage_dir }}/core': logs
+      '{{ stage_dir }}/deprecations.log': logs
+      '{{ stage_dir }}/df.txt': logs
+      '{{ stage_dir }}/dpkg-l.txt': logs
+      '{{ stage_dir }}/etc': logs
+      '{{ stage_dir }}/iptables.txt': logs
+      '{{ stage_dir }}/listen53.txt': logs
+      '{{ stage_dir }}/pip2-freeze.txt': logs
+      '{{ stage_dir }}/pip3-freeze.txt': logs
+      '{{ stage_dir }}/rpm-qa.txt': logs
+      '{{ stage_dir }}/verify_tempest_conf.log': logs
+compute:
+  hosts:
+    compute1: null
+    controller: null
+  vars: {}
+peers:
+  hosts:
+    compute1: null
+  vars: {}
+subnode:
+  hosts:
+    compute1: null
+  vars:
+    devstack_localrc:
+      ADMIN_PASSWORD: secretadmin
+      DATABASE_HOST: '{{ hostvars[''controller''][''nodepool''][''private_ipv4'']
+        }}'
+      DATABASE_PASSWORD: secretdatabase
+      DATABASE_TYPE: mysql
+      ERROR_ON_CLONE: true
+      ETCD_DOWNLOAD_URL: http://tarballs.openstack.org/etcd/
+      FIXED_RANGE: 10.1.0.0/20
+      FLOATING_RANGE: 172.24.5.0/24
+      GLANCE_HOSTPORT: '{{ hostvars[''controller''][''nodepool''][''private_ipv4'']
+        }}:9292'
+      HOST_IP: '{{ hostvars[inventory_hostname][''nodepool''][''private_ipv4''] }}'
+      IPV4_ADDRS_SAFE_TO_USE: 10.1.0.0/20
+      LIBVIRT_TYPE: qemu
+      LOGFILE: /opt/stack/logs/devstacklog.txt
+      LOG_COLOR: false
+      NETWORK_GATEWAY: 10.1.0.1
+      NOVNC_FROM_PACKAGE: true
+      PUBLIC_BRIDGE_MTU: '{{ external_bridge_mtu }}'
+      PUBLIC_NETWORK_GATEWAY: 172.24.5.1
+      Q_HOST: '{{ hostvars[''controller''][''nodepool''][''private_ipv4''] }}'
+      RABBIT_HOST: '{{ hostvars[''controller''][''nodepool''][''private_ipv4''] }}'
+      RABBIT_PASSWORD: secretrabbit
+      SERVICE_HOST: '{{ hostvars[''controller''][''nodepool''][''private_ipv4''] }}'
+      SERVICE_PASSWORD: secretservice
+      VERBOSE: true
+      VERBOSE_NO_TIMESTAMP: true
+    devstack_services:
+      base: false
+      c-bak: true
+      c-vol: true
+      dstat: true
+      horizon: false
+      n-cpu: true
+      neutron-agent: true
+      peakmem_tracker: true
+      placement-client: true
+      tempest: false
+      tls-proxy: true
+switch:
+  hosts:
+    controller: null
+  vars: {}
+tempest:
+  hosts:
+    controller: null
+  vars: {}

@@ -2,3 +2,6 @@
 git/*
 .vagrant
 *.vdi
+logs/zuul-info
+work
+*.retry

@@ -7,90 +7,100 @@
 # you're doing.
 
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
-ephemeral_disk = File.join(VAGRANT_ROOT, 'ephemeral.vdi')
+ephemeral_disk_controller = File.join(VAGRANT_ROOT, 'controller.vdi')
+ephemeral_disk_compute1 = File.join(VAGRANT_ROOT, 'compute1.vdi')
 shell_provision = File.join(VAGRANT_ROOT, 'setup.sh')
 
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
 
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "ubuntu/xenial64"
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+    # Create a forwarded port mapping which allows access to a specific port
+    # within the machine from a port on the host machine. In the example below,
+    # accessing "localhost:8080" will access port 80 on the guest machine.
+    # NOTE(andreaf) Port 443 is needed by devstack but cannot be forwarded by
+    # virtualbox since it's privileged. Use an ssh tunnel instead, e.g.
+    #
+    # sudo ssh -p 2222 -gNfL 443:localhost:443 ubuntu@localhost -i [path to key]  #
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE(andreaf) Port 80 is needed by devstack but cannot be forwarded by
-  # virtualbox since it's privileged. Use an ssh tunnel instead, e.g.
-  #
-  # sudo ssh -p 2222 -gNfL 80:localhost:80 ubuntu@localhost -i [path to key]
-  #
-  # The ssh key can be found by "vagrant ssh-config"
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP. Static IP is required to:
+    # - avoid overlap with other VMs
+    # - use fixed inventory file
+    controller.vm.network :private_network, ip: "192.168.56.101"
+    controller.vm.network :private_network, ip: "fddd::10"
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  config.vm.network "private_network", type: "dhcp"
+    controller.vm.provider "virtualbox" do |vb|
+      # Display the VirtualBox GUI when booting the machine
+      vb.gui = false
 
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
+      # Customize the amount of memory and CPU for the VM:
+      vb.memory = "8192"
+      vb.cpus = "4"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  config.vm.provider "virtualbox" do |vb|
-    # Display the VirtualBox GUI when booting the machine
-    vb.gui = false
-  
-    # Customize the amount of memory and CPU for the VM:
-    vb.memory = "8192"
-    vb.cpus = "4"
+      # Customize the VM name
+      vb.name = "controller"
+      vb.hostname = "controller"
 
-    # Customize the VM name
-    vb.name = "controller"
-
-    unless File.exist?(ephemeral_disk)
-      vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 9 * 1024]
+      unless File.exist?(ephemeral_disk_controller)
+        vb.customize ['createhd', '--filename', ephemeral_disk_controller, '--size', 9 * 1024]
+      end
+      vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', ephemeral_disk_controller]
     end
-    vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', ephemeral_disk]
+
+    # Sync git repos to src in the home of the ssh user.
+    # Zuul and other roles expect them in there.
+    controller.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
+
+    controller.vm.provision "shell" do |s|
+      s.path = shell_provision
+    end
   end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
 
-  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
-  # such as FTP and Heroku are also available. See the documentation at
-  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
-  # config.push.define "atlas" do |push|
-  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
-  # end
+  config.vm.define "compute1" do |compute1|
+    compute1.vm.box = "ubuntu/xenial64"
 
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  config.vm.synced_folder "git", "~ubuntu/src", create: true, owner: "ubuntu", group: "ubuntu"
+    # Create a forwarded port mapping which allows access to a specific port
+    # within the machine from a port on the host machine. In the example below,
+    # accessing "localhost:8080" will access port 80 on the guest machine.
+    # NOTE(andreaf) Port 443 is needed by devstack but cannot be forwarded by
+    # virtualbox since it's privileged. Use an ssh tunnel instead, e.g.
+    #
+    # sudo ssh -p 2222 -gNfL 443:localhost:443 ubuntu@localhost -i [path to key]  #
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell" do |s|
-  #   s.env = {REPRODUCE_SCRIPT:ENV['REPRODUCE_SCRIPT']}
-  #   s.path = shell_provision
-  # end
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP. Static IP is required to:
+    # - avoid overlap with other VMs
+    # - use fixed inventory file
+    compute1.vm.network :private_network, ip: "192.168.56.102"
+    compute1.vm.network :private_network, ip: "fddd::11"
 
-  # config.vm.provision "ansible" do |ansible|
-  #   ENV['ANSIBLE_ROLES_PATH'] = "/git/github.com/afrittoli/cross_service_tempest_plugins/ansible/roles:/git/openstack.org/openstack-infra/devstack-gate/playbooks/roles"
-  #   ansible.playbook = "setup.yaml"
-  # end
-  
+    compute1.vm.provider "virtualbox" do |vb|
+      # Display the VirtualBox GUI when booting the machine
+      vb.gui = false
+
+      # Customize the amount of memory and CPU for the VM:
+      vb.memory = "8192"
+      vb.cpus = "4"
+
+      # Customize the VM name
+      vb.name = "compute1"
+      vb.hostname = "compute1"
+
+      unless File.exist?(ephemeral_disk_compute1)
+        vb.customize ['createhd', '--filename', ephemeral_disk_compute1, '--size', 9 * 1024]
+      end
+      vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', ephemeral_disk_compute1]
+    end
+
+    # Sync git repos to src in the home of the ssh user.
+    # Zuul and other roles expect them in there.
+    compute1.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
+
+    compute1.vm.provision "shell" do |s|
+      s.path = shell_provision
+    end
+  end
+
 end
