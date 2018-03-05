@@ -33,14 +33,6 @@ Vagrant.configure("2") do |config|
   # sudo ssh -p 2222 -gNfL 80:localhost:80 ubuntu@localhost -i [path to key]
   #
   # The ssh key can be found by "vagrant ssh-config"
-  config.vm.network "forwarded_port", guest: 8774, host: 8774
-  config.vm.network "forwarded_port", guest: 8775, host: 8775
-  config.vm.network "forwarded_port", guest: 8776, host: 8776
-  config.vm.network "forwarded_port", guest: 9191, host: 9191
-  config.vm.network "forwarded_port", guest: 9292, host: 9292
-  config.vm.network "forwarded_port", guest: 9696, host: 9696
-  config.vm.network "forwarded_port", guest: 5000, host: 5000
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -64,7 +56,7 @@ Vagrant.configure("2") do |config|
     vb.cpus = "4"
 
     # Customize the VM name
-    vb.name = "devstack"
+    vb.name = "controller"
 
     unless File.exist?(ephemeral_disk)
       vb.customize ['createhd', '--filename', ephemeral_disk, '--size', 9 * 1024]
@@ -86,19 +78,19 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
+  config.vm.synced_folder "git", "~ubuntu/src", create: true, owner: "ubuntu", group: "ubuntu"
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell" do |s|
-    s.env = {REPRODUCE_SCRIPT:ENV['REPRODUCE_SCRIPT']}
-    s.path = shell_provision
-  end
+  # config.vm.provision "shell" do |s|
+  #   s.env = {REPRODUCE_SCRIPT:ENV['REPRODUCE_SCRIPT']}
+  #   s.path = shell_provision
+  # end
 
-  config.vm.provision "ansible" do |ansible|
-    ENV['ANSIBLE_ROLES_PATH'] = "/git/github.com/afrittoli/cross_service_tempest_plugins/ansible/roles:/git/openstack.org/openstack-infra/devstack-gate/playbooks/roles"
-    ansible.playbook = "setup.yaml"
-  end
+  # config.vm.provision "ansible" do |ansible|
+  #   ENV['ANSIBLE_ROLES_PATH'] = "/git/github.com/afrittoli/cross_service_tempest_plugins/ansible/roles:/git/openstack.org/openstack-infra/devstack-gate/playbooks/roles"
+  #   ansible.playbook = "setup.yaml"
+  # end
   
 end
