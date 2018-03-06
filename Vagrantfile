@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
     # - use fixed inventory file
     controller.vm.network :private_network, ip: "192.168.56.101"
     controller.vm.network :private_network, ip: "fddd::10"
+    controller.vm.hostname = "controller"
 
     controller.vm.provider "virtualbox" do |vb|
       # Display the VirtualBox GUI when booting the machine
@@ -41,7 +42,6 @@ Vagrant.configure("2") do |config|
 
       # Customize the VM name
       vb.name = "controller"
-      vb.hostname = "controller"
 
       unless File.exist?(ephemeral_disk_controller)
         vb.customize ['createhd', '--filename', ephemeral_disk_controller, '--size', 9 * 1024]
@@ -75,6 +75,7 @@ Vagrant.configure("2") do |config|
     # - use fixed inventory file
     compute1.vm.network :private_network, ip: "192.168.56.102"
     compute1.vm.network :private_network, ip: "fddd::11"
+    compute1.vm.hostname = "compute1"
 
     compute1.vm.provider "virtualbox" do |vb|
       # Display the VirtualBox GUI when booting the machine
@@ -86,7 +87,6 @@ Vagrant.configure("2") do |config|
 
       # Customize the VM name
       vb.name = "compute1"
-      vb.hostname = "compute1"
 
       unless File.exist?(ephemeral_disk_compute1)
         vb.customize ['createhd', '--filename', ephemeral_disk_compute1, '--size', 9 * 1024]
