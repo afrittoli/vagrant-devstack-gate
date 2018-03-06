@@ -1,3 +1,9 @@
+# Do the shell pre-provisioning
+- hosts: all
+  tasks:
+    - name: Run the pre-provisioning script
+      script: setup.sh
+
 # From project-config/playbooks/base/pre.yaml
 - hosts: localhost
   roles:

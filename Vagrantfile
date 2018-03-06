@@ -9,7 +9,6 @@
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
 ephemeral_disk_controller = File.join(VAGRANT_ROOT, 'controller.vdi')
 ephemeral_disk_compute1 = File.join(VAGRANT_ROOT, 'compute1.vdi')
-shell_provision = File.join(VAGRANT_ROOT, 'setup.sh')
 
 Vagrant.configure("2") do |config|
 
@@ -52,10 +51,8 @@ Vagrant.configure("2") do |config|
     # Sync git repos to src in the home of the ssh user.
     # Zuul and other roles expect them in there.
     controller.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
+    controller.vm.synced_folder "cache", "/opt/cache", create: true, owner: "ubuntu", group: "ubuntu"
 
-    controller.vm.provision "shell" do |s|
-      s.path = shell_provision
-    end
   end
 
   config.vm.define "compute1" do |compute1|
@@ -97,10 +94,13 @@ Vagrant.configure("2") do |config|
     # Sync git repos to src in the home of the ssh user.
     # Zuul and other roles expect them in there.
     compute1.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
+    compute1.vm.synced_folder "cache", "/opt/cache", create: true, owner: "ubuntu", group: "ubuntu"
 
-    compute1.vm.provision "shell" do |s|
-      s.path = shell_provision
-    end
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "setup.yaml"
+    ansible.inventory_path = "inventory.yaml"
   end
 
 end
