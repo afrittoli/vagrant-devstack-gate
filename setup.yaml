@@ -1,5 +1,4 @@
 # From project-config/playbooks/base/pre.yaml
-
 - hosts: localhost
   roles:
     - role: emit-job-header
@@ -20,3 +19,4 @@
       repo_src_dir: "/home/ubuntu/src/git.openstack.org"
 
 - include: work/src/git.openstack.org/openstack-infra/zuul-jobs/playbooks/multinode/pre.yaml
+- include: work/src/git.openstack.org/openstack-dev/devstack/playbooks/pre.yaml
