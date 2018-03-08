@@ -1,9 +1,4 @@
-# Do the shell pre-provisioning
-- hosts: all
-  tasks:
-    - name: Run the pre-provisioning script
-      script: setup.sh
-
+# PRE plays
 # From project-config/playbooks/base/pre.yaml
 - hosts: localhost
   roles:
@@ -26,3 +21,16 @@
 
 - include: work/src/git.openstack.org/openstack-infra/zuul-jobs/playbooks/multinode/pre.yaml
 - include: work/src/git.openstack.org/openstack-dev/devstack/playbooks/pre.yaml
+
+# RUN play
+# Devstack run
+- include: work/src/git.openstack.org/openstack-dev/devstack/playbooks/devstack.yaml
+
+# Tempest run
+# - include: work/src/git.openstack.org/openstack/tempest/playbooks/devstack-tempest.yaml
+
+# POST plays - enable on demand for testing
+#- include: work/src/git.openstack.org/openstack/tempest/playbooks/post-tempest.yaml
+#- include: work/src/git.openstack.org/openstack-dev/devstack/playbooks/post.yaml
+#- include: work/src/git.openstack.org/openstack-infra/project-config/playbooks/base/post-ssh.yaml
+#- include: work/src/git.openstack.org/openstack-infra/project-config/playbooks/base/post-logs.yaml

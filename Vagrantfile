@@ -9,6 +9,7 @@
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
 ephemeral_disk_controller = File.join(VAGRANT_ROOT, 'controller.vdi')
 ephemeral_disk_compute1 = File.join(VAGRANT_ROOT, 'compute1.vdi')
+shell_provision = File.join(VAGRANT_ROOT, 'setup.sh')
 
 Vagrant.configure("2") do |config|
 
@@ -96,6 +97,10 @@ Vagrant.configure("2") do |config|
     compute1.vm.synced_folder "git", "/opt/git", create: true, owner: "ubuntu", group: "ubuntu"
     compute1.vm.synced_folder "cache", "/opt/cache", create: true, owner: "ubuntu", group: "ubuntu"
 
+  end
+
+  config.vm.provision "shell" do |s|
+    s.path = shell_provision
   end
 
   config.vm.provision "ansible" do |ansible|

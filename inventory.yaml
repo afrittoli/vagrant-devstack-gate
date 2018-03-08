@@ -3,10 +3,10 @@ all:
     compute1:
       ansible_connection: ssh
       ansible_host: 127.0.0.1
-      ansible_port: 2222
+      ansible_port: 2200
       ansible_user: ubuntu
       ansible_user_dir: /home/ubuntu
-      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/controller/virtualbox/private_key
+      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/compute1/virtualbox/private_key
       nodepool:
         az: null
         cloud: local-vagrant
@@ -20,10 +20,10 @@ all:
     controller:
       ansible_connection: ssh
       ansible_host: 127.0.0.1
-      ansible_port: 2200
+      ansible_port: 2222
       ansible_user: ubuntu
       ansible_user_dir: /home/ubuntu
-      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/compute1/virtualbox/private_key
+      ansible_ssh_private_key_file: /git/github.com/afrittoli/vagrant-devstack-gate/.vagrant/machines/controller/virtualbox/private_key
       nodepool:
         az: null
         cloud: local-vagrant
